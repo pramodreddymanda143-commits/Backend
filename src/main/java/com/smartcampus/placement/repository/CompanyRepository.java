@@ -1,0 +1,1 @@
+package com.smartcampus.placement.repository; import com.smartcampus.placement.entity.Company; import org.springframework.data.jpa.repository.JpaRepository; public interface CompanyRepository extends JpaRepository<Company,Long>{}
