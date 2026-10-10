@@ -15,7 +15,7 @@ public class PlacementController {
  public PlacementController(StudentRepository s,CompanyRepository c,JobRepository j,ApplicationRepository a){students=s;companies=c;jobs=j;applications=a;}
 
  @GetMapping("/students") public List<Student> students(){return students.findAll();}
- @PostMapping("/students") public Student addStudent(@RequestBody Student s){return students.save(s);}
+ @PostMapping("/students") public ResponseEntity<?> addStudent(@RequestBody Student s){if(s.getEmail()!=null&&students.findByEmailIgnoreCase(s.getEmail().trim()).isPresent()){return ResponseEntity.badRequest().body(mapOf("error","A student with this email is already registered"));} return ResponseEntity.ok(students.save(s));}
  @PutMapping("/students/{id}") public ResponseEntity<Student> updateStudent(@PathVariable Long id,@RequestBody Student s){return students.findById(id).map(x->{x.setName(s.getName());x.setEmail(s.getEmail());x.setBranch(s.getBranch());x.setCgpa(s.getCgpa());x.setSkills(s.getSkills());return ResponseEntity.ok(students.save(x));}).orElse(ResponseEntity.notFound().build());}
  @PostMapping("/students/{id}/resume") public ResponseEntity<?> resume(@PathVariable Long id,@RequestParam("file") MultipartFile file) throws IOException {
    return students.findById(id).map(s->{try{Path dir=Paths.get("uploads");Files.createDirectories(dir);String name=UUID.randomUUID()+"_"+file.getOriginalFilename();Files.copy(file.getInputStream(),dir.resolve(name),StandardCopyOption.REPLACE_EXISTING);s.setResumeFile(name);students.save(s);return ResponseEntity.ok(mapOf("message","Resume uploaded","file",name));}catch(IOException e){return ResponseEntity.internalServerError().body(mapOf("error","Upload failed"));}}).orElse(ResponseEntity.notFound().build());

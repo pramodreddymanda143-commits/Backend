@@ -5,15 +5,22 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Configuration
 public class DataSeeder {
   @Bean
   CommandLineRunner seed(
+      AdminAccountRepository admr,
+      PasswordEncoder pe,
       StudentRepository sr,
       CompanyRepository cr,
       JobRepository jr,
       ApplicationRepository ar) {
     return args -> {
+      if (admr.count() == 0) {
+        admr.save(new AdminAccount("admin@example.com", pe.encode("admin12345678")));
+      }
       if (sr.count() == 0) {
         sr.save(new Student("Ananya Sharma", "ananya@example.com", "CSE", 8.7, "Java, React, SQL, Spring Boot"));
         sr.save(new Student("Rahul Kumar", "rahul@example.com", "ECE", 7.9, "Python, SQL, Linux, Networking"));
