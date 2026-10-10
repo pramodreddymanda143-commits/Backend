@@ -50,6 +50,6 @@ public class PlacementController {
  }
  @PatchMapping("/applications/{id}") public ResponseEntity<Application> status(@PathVariable Long id,@RequestParam String value){return applications.findById(id).map(a->{a.setStatus(value);return ResponseEntity.ok(applications.save(a));}).orElse(ResponseEntity.notFound().build());}
  @GetMapping("/dashboard") public Map<String,Object> dashboard(){return mapOf("students",students.count(),"companies",companies.count(),"jobs",jobs.count(),"applications",applications.count());}
- private boolean isStudent(Authentication authentication){return authentication.getAuthorities().stream().anyMatch(authority->authority.getAuthority().equals("ROLE_STUDENT"));}
- private boolean isOwnStudent(Long studentId,Authentication authentication){return students.findByEmailIgnoreCase(authentication.getName()).map(student->student.getId().equals(studentId)).orElse(false);}
+ private boolean isStudent(Authentication authentication){return authentication!=null&&authentication.getAuthorities().stream().anyMatch(authority->authority.getAuthority().equals("ROLE_STUDENT"));}
+ private boolean isOwnStudent(Long studentId,Authentication authentication){return authentication!=null&&students.findByEmailIgnoreCase(authentication.getName()).map(student->student.getId().equals(studentId)).orElse(false);}
 }

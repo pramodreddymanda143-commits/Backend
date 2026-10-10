@@ -74,34 +74,13 @@ public class SecurityConfig {
     http.authenticationProvider(authenticationProvider)
         .securityContext(context -> context.securityContextRepository(securityContextRepository))
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .csrf(
-            csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+        .csrf(csrf -> csrf.disable())
+        .headers(headers -> headers.frameOptions(frame -> frame.disable()))
         .authorizeHttpRequests(
             requests ->
                 requests
-                    .requestMatchers(
-                        HttpMethod.GET, "/api/auth/csrf", "/api/auth/status")
-                    .permitAll()
-                    .requestMatchers(
-                        HttpMethod.POST, "/api/auth/register", "/api/auth/login")
-                    .permitAll()
-                    .requestMatchers(
-                        HttpMethod.POST, "/api/auth/student/register", "/api/auth/student/login")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/auth/me")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/auth/logout")
-                    .hasAnyRole("ADMIN", "STUDENT")
-                    .requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/eligible/**")
-                    .hasAnyRole("ADMIN", "STUDENT")
-                    .requestMatchers(HttpMethod.GET, "/api/applications/student/**")
-                    .hasAnyRole("ADMIN", "STUDENT")
-                    .requestMatchers(HttpMethod.POST, "/api/applications")
-                    .hasAnyRole("ADMIN", "STUDENT")
                     .anyRequest()
-                    .hasRole("ADMIN"))
+                    .permitAll())
         .exceptionHandling(
             exceptions ->
                 exceptions.authenticationEntryPoint(
