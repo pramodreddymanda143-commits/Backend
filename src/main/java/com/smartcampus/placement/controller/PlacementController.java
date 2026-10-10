@@ -9,7 +9,7 @@ import java.io.IOException; import java.nio.file.*; import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController @RequestMapping("/api")
-@CrossOrigin(origins={"http://localhost:5173","http://localhost:5174"})
+@CrossOrigin(originPatterns = "*")
 public class PlacementController {
  private final StudentRepository students; private final CompanyRepository companies; private final JobRepository jobs; private final ApplicationRepository applications;
  public PlacementController(StudentRepository s,CompanyRepository c,JobRepository j,ApplicationRepository a){students=s;companies=c;jobs=j;applications=a;}
